@@ -1,0 +1,1519 @@
+
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A Material Design theme for MkDocs">
+      
+      
+        <link rel="canonical" href="https://creme-ml.github.io/examples/matrix-factorization-for-recommender-systems-part-2/">
+      
+      
+        <meta name="author" content="The creme developers">
+      
+      <link rel="shortcut icon" href="../../img/favicon.ico">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-5.5.12">
+    
+    
+      
+        <title>Matrix Factorization for Recommender Systems - Part 2 - creme</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.4dd2dd8d.min.css">
+      
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.6a5ad368.min.css">
+      
+      
+        
+        
+        <meta name="theme-color" content="#4051b5">
+      
+    
+    
+    
+      
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
+      
+    
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+      <link rel="stylesheet" href="../../css/version-select.css">
+    
+    
+      
+        
+<script>window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga("create","UA-63302552-3","auto"),ga("set","anonymizeIp",!0),ga("send","pageview"),document.addEventListener("DOMContentLoaded",function(){document.forms.search&&document.forms.search.query.addEventListener("blur",function(){if(this.value){var e=document.location.pathname;ga("send","pageview",e+"?q="+this.value)}})}),document.addEventListener("DOMContentSwitch",function(){ga("send","pageview",document.location.pathname)})</script>
+<script async src="https://www.google-analytics.com/analytics.js"></script>
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#matrix-factorization-for-recommender-systems-part-2" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid" aria-label="Header">
+    <a href="https://creme-ml.github.io/" title="creme" class="md-header-nav__button md-logo" aria-label="creme">
+      
+  <img src="../../img/creme_square.svg" alt="logo">
+
+    </a>
+    <label class="md-header-nav__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header-nav__title" data-md-component="header-title">
+      
+        <div class="md-header-nav__ellipsis">
+          <span class="md-header-nav__topic md-ellipsis">
+            creme
+          </span>
+          <span class="md-header-nav__topic md-ellipsis">
+            
+              Matrix Factorization for Recommender Systems - Part 2
+            
+          </span>
+        </div>
+      
+    </div>
+    
+      <label class="md-header-nav__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active">
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header-nav__source">
+        
+<a href="https://github.com/creme-ml/creme/" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    creme-ml/creme
+  </div>
+</a>
+      </div>
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+        
+      
+      
+        
+          
+
+  
+
+<nav class="md-tabs md-tabs--active" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-tabs__inner md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  <li class="md-tabs__item">
+    
+      <a href="../.." class="md-tabs__link">
+        Welcome
+      </a>
+    
+  </li>
+
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href="../../user-guide/reading-data/" class="md-tabs__link">
+          User guide
+        </a>
+      
+    </li>
+  
+
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href="../../api/overview/" class="md-tabs__link">
+          API reference
+        </a>
+      
+    </li>
+  
+
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href="../batch-to-online/" class="md-tabs__link md-tabs__link--active">
+          Examples
+        </a>
+      
+    </li>
+  
+
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href="../../releases/0.0.2/" class="md-tabs__link">
+          Releases
+        </a>
+      
+    </li>
+  
+
+      
+        
+      
+        
+      
+        
+      
+    </ul>
+  </div>
+</nav>
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="https://creme-ml.github.io/" title="creme" class="md-nav__button md-logo" aria-label="creme">
+      
+  <img src="../../img/creme_square.svg" alt="logo">
+
+    </a>
+    creme
+  </label>
+  
+    <div class="md-nav__source">
+      
+<a href="https://github.com/creme-ml/creme/" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    creme-ml/creme
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../.." title="Welcome" class="md-nav__link">
+      Welcome
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2">
+    
+    <label class="md-nav__link" for="nav-2">
+      User guide
+      <span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="User guide" data-md-level="1">
+      <label class="md-nav__title" for="nav-2">
+        <span class="md-nav__icon md-icon"></span>
+        User guide
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../user-guide/reading-data/" title="Reading data" class="md-nav__link">
+      Reading data
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../user-guide/model-evaluation/" title="Model evaluation" class="md-nav__link">
+      Model evaluation
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../user-guide/pipelines/" title="Pipelines" class="md-nav__link">
+      Pipelines
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../user-guide/feature-extraction/" title="Feature extraction" class="md-nav__link">
+      Feature extraction
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../user-guide/hyperparameter-tuning/" title="Hyperparameter tuning" class="md-nav__link">
+      Hyperparameter tuning
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../user-guide/mini-batching/" title="Mini-batching" class="md-nav__link">
+      Mini-batching
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3">
+    
+    <label class="md-nav__link" for="nav-3">
+      API reference
+      <span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="API reference" data-md-level="1">
+      <label class="md-nav__title" for="nav-3">
+        <span class="md-nav__icon md-icon"></span>
+        API reference
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../api/overview/" title="Overview" class="md-nav__link">
+      Overview
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-2" type="checkbox" id="nav-3-2">
+    
+    <label class="md-nav__link" for="nav-3-2">
+      evaluate
+      <span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="evaluate" data-md-level="2">
+      <label class="md-nav__title" for="nav-3-2">
+        <span class="md-nav__icon md-icon"></span>
+        evaluate
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../api/evaluate/progressive-val-score/" title="progressive_val_score" class="md-nav__link">
+      progressive_val_score
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-3" type="checkbox" id="nav-3-3">
+    
+    <label class="md-nav__link" for="nav-3-3">
+      linear_model
+      <span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="linear_model" data-md-level="2">
+      <label class="md-nav__title" for="nav-3-3">
+        <span class="md-nav__icon md-icon"></span>
+        linear_model
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../api/linear-model/LinearRegression/" title="LinearRegression" class="md-nav__link">
+      LinearRegression
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-4" type="checkbox" id="nav-3-4">
+    
+    <label class="md-nav__link" for="nav-3-4">
+      optim
+      <span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="optim" data-md-level="2">
+      <label class="md-nav__title" for="nav-3-4">
+        <span class="md-nav__icon md-icon"></span>
+        optim
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../api/optim/Optimizer/" title="Optimizer" class="md-nav__link">
+      Optimizer
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-4-2" type="checkbox" id="nav-3-4-2">
+    
+    <label class="md-nav__link" for="nav-3-4-2">
+      schedulers
+      <span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="schedulers" data-md-level="3">
+      <label class="md-nav__title" for="nav-3-4-2">
+        <span class="md-nav__icon md-icon"></span>
+        schedulers
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../api/optim/schedulers/InverseScaling/" title="InverseScaling" class="md-nav__link">
+      InverseScaling
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../api/optim/schedulers/Scheduler/" title="Scheduler" class="md-nav__link">
+      Scheduler
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-4" type="checkbox" id="nav-4" checked>
+    
+    <label class="md-nav__link" for="nav-4">
+      Examples
+      <span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="Examples" data-md-level="1">
+      <label class="md-nav__title" for="nav-4">
+        <span class="md-nav__icon md-icon"></span>
+        Examples
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../batch-to-online/" title="From batch to online" class="md-nav__link">
+      From batch to online
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../bike-sharing-forecasting/" title="Bike-sharing forecasting" class="md-nav__link">
+      Bike-sharing forecasting
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../building-a-simple-time-series-model/" title="Building a simple time series model" class="md-nav__link">
+      Building a simple time series model
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../debugging-a-pipeline/" title="Debugging a pipeline" class="md-nav__link">
+      Debugging a pipeline
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../imbalanced-learning/" title="Working with imbalanced data" class="md-nav__link">
+      Working with imbalanced data
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../matrix-factorization-for-recommender-systems-part-1/" title="Matrix Factorization for Recommender Systems - Part 1" class="md-nav__link">
+      Matrix Factorization for Recommender Systems - Part 1
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+      
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        Matrix Factorization for Recommender Systems - Part 2
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+    
+    <a href="./" title="Matrix Factorization for Recommender Systems - Part 2" class="md-nav__link md-nav__link--active">
+      Matrix Factorization for Recommender Systems - Part 2
+    </a>
+    
+      
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#factorization-machines" class="md-nav__link">
+    Factorization Machines
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#feature-engineering-for-fm-models" class="md-nav__link">
+    Feature engineering for FM models
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#higher-order-factorization-machines-hofm" class="md-nav__link">
+    Higher-Order Factorization Machines (HOFM)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#field-aware-factorization-machines-ffm" class="md-nav__link">
+    Field-aware Factorization Machines (FFM)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#field-weighted-factorization-machines-fwfm" class="md-nav__link">
+    Field-weighted Factorization Machines (FwFM)
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+    
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../matrix-factorization-for-recommender-systems-part-3/" title="Matrix Factorization for Recommender Systems - Part 3" class="md-nav__link">
+      Matrix Factorization for Recommender Systems - Part 3
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../quantile-regression-uncertainty/" title="Handling uncertainty with quantile regression" class="md-nav__link">
+      Handling uncertainty with quantile regression
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../the-art-of-using-pipelines/" title="The art of using pipelines" class="md-nav__link">
+      The art of using pipelines
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-5" type="checkbox" id="nav-5">
+    
+    <label class="md-nav__link" for="nav-5">
+      Releases
+      <span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="Releases" data-md-level="1">
+      <label class="md-nav__title" for="nav-5">
+        <span class="md-nav__icon md-icon"></span>
+        Releases
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../releases/0.0.2/" title="0.0.2 - 2019-02-13" class="md-nav__link">
+      0.0.2 - 2019-02-13
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../releases/0.0.3/" title="0.0.3 - 2019-03-21" class="md-nav__link">
+      0.0.3 - 2019-03-21
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../releases/0.1.0/" title="0.1.0 - 2019-05-08" class="md-nav__link">
+      0.1.0 - 2019-05-08
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../releases/0.2.0/" title="0.2.0 - 2019-05-27" class="md-nav__link">
+      0.2.0 - 2019-05-27
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../releases/0.3.0/" title="0.3.0 - 2019-06-23" class="md-nav__link">
+      0.3.0 - 2019-06-23
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../releases/0.4.1/" title="0.4.1 - 2019-10-23" class="md-nav__link">
+      0.4.1 - 2019-10-23
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../releases/0.4.3/" title="0.4.3 - 2019-10-27" class="md-nav__link">
+      0.4.3 - 2019-10-27
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../releases/0.4.4/" title="0.4.4 - 2019-11-11" class="md-nav__link">
+      0.4.4 - 2019-11-11
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../releases/0.5.0/" title="0.5.0 - 2020-03-13" class="md-nav__link">
+      0.5.0 - 2020-03-13
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../releases/0.5.1/" title="0.5.1 - 2020-03-29" class="md-nav__link">
+      0.5.1 - 2020-03-29
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../releases/0.6.0/" title="0.6.0 - 2020-06-09" class="md-nav__link">
+      0.6.0 - 2020-06-09
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../releases/0.6.1/" title="0.6.1 - 2020-06-10" class="md-nav__link">
+      0.6.1 - 2020-06-10
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../releases/unreleased/" title="Unreleased" class="md-nav__link">
+      Unreleased
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../../faq/" title="FAQ" class="md-nav__link">
+      FAQ
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../../getting-started/" title="Getting started" class="md-nav__link">
+      Getting started
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../../installation/" title="Installation" class="md-nav__link">
+      Installation
+    </a>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#factorization-machines" class="md-nav__link">
+    Factorization Machines
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#feature-engineering-for-fm-models" class="md-nav__link">
+    Feature engineering for FM models
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#higher-order-factorization-machines-hofm" class="md-nav__link">
+    Higher-Order Factorization Machines (HOFM)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#field-aware-factorization-machines-ffm" class="md-nav__link">
+    Field-aware Factorization Machines (FFM)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#field-weighted-factorization-machines-fwfm" class="md-nav__link">
+    Field-weighted Factorization Machines (FwFM)
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/creme-ml/creme/edit/master/docs/examples/matrix-factorization-for-recommender-systems-part-2.md" title="Edit this page" class="md-content__button md-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
+                  </a>
+                
+                
+                  
+                
+                
+                <h1 id="matrix-factorization-for-recommender-systems-part-2">Matrix Factorization for Recommender Systems - Part 2<a class="headerlink" href="#matrix-factorization-for-recommender-systems-part-2" title="Permanent link">&para;</a></h1>
+<p>As seen in <a href="https://creme-ml.github.io/examples/matrix-factorization-for-recommender-systems-part-1">Part 1</a>, strength of <a href="https://en.wikipedia.org/wiki/Matrix_factorization_(recommender_systems)">Matrix Factorization (MF)</a> lies in its ability to deal with sparse and high cardinality categorical variables. In this second tutorial we will have a look at Factorization Machines (FM) algorithm and study how it generalizes the power of MF.</p>
+<p><strong>Table of contents of this tutorial series on matrix factorization for recommender systems:</strong></p>
+<ul>
+<li><a href="https://creme-ml.github.io/examples/matrix-factorization-for-recommender-systems-part-1">Part 1 - Traditional Matrix Factorization methods for Recommender Systems</a></li>
+<li><a href="https://creme-ml.github.io/examples/matrix-factorization-for-recommender-systems-part-2">Part 2 - Factorization Machines and Field-aware Factorization Machines</a></li>
+<li><a href="https://creme-ml.github.io/examples/matrix-factorization-for-recommender-systems-part-3">Part 3 - Large scale learning and better predictive power with multiple pass learning</a></li>
+</ul>
+<h2 id="factorization-machines">Factorization Machines<a class="headerlink" href="#factorization-machines" title="Permanent link">&para;</a></h2>
+<p>Steffen Rendel came up in 2010 with <a href="https://www.csie.ntu.edu.tw/~b97053/paper/Rendle2010FM.pdf">Factorization Machines</a>, an algorithm able to handle any real valued feature vector, combining the advantages of general predictors with factorization models. It became quite popular in the field of online advertising, notably after winning several Kaggle competitions. The modeling technique starts with a linear regression to capture the effects of each variable individually:</p>
+<div>
+<div class="MathJax_Preview">
+\normalsize
+\hat{y}(x) = w_{0} + \sum_{j=1}^{p} w_{j} x_{j}
+</div>
+<script type="math/tex; mode=display">
+\normalsize
+\hat{y}(x) = w_{0} + \sum_{j=1}^{p} w_{j} x_{j}
+</script>
+</div>
+<p>Then are added interaction terms to learn features relations. Instead of learning a single and specific weight per interaction (as in <a href="https://en.wikipedia.org/wiki/Polynomial_regression">polynomial regression</a>), a set of latent factors is learnt per feature (as in MF). An interaction is calculated by multiplying involved features product with their latent vectors dot product. The degree of factorization — or model order — represents the maximum number of features per interaction considered. The model equation for a factorization machine of degree <span><span class="MathJax_Preview">d</span><script type="math/tex">d</script></span> = 2 is defined as:</p>
+<div>
+<div class="MathJax_Preview">
+\normalsize
+\hat{y}(x) = w_{0} + \sum_{j=1}^{p} w_{j} x_{j}  + \sum_{j=1}^{p} \sum_{j'=j+1}^{p} \langle \mathbf{v}_j, \mathbf{v}_{j'} \rangle x_{j} x_{j'}
+</div>
+<script type="math/tex; mode=display">
+\normalsize
+\hat{y}(x) = w_{0} + \sum_{j=1}^{p} w_{j} x_{j}  + \sum_{j=1}^{p} \sum_{j'=j+1}^{p} \langle \mathbf{v}_j, \mathbf{v}_{j'} \rangle x_{j} x_{j'}
+</script>
+</div>
+<p>Where <span><span class="MathJax_Preview">\normalsize \langle \mathbf{v}_j, \mathbf{v}_{j'} \rangle</span><script type="math/tex">\normalsize \langle \mathbf{v}_j, \mathbf{v}_{j'} \rangle</script></span> is the dot product of <span><span class="MathJax_Preview">j</span><script type="math/tex">j</script></span> and <span><span class="MathJax_Preview">j'</span><script type="math/tex">j'</script></span> latent vectors:</p>
+<div>
+<div class="MathJax_Preview">
+\normalsize
+\langle \mathbf{v}_j, \mathbf{v}_{j'} \rangle = \sum_{f=1}^{k} \mathbf{v}_{j, f} \cdot \mathbf{v}_{j', f}
+</div>
+<script type="math/tex; mode=display">
+\normalsize
+\langle \mathbf{v}_j, \mathbf{v}_{j'} \rangle = \sum_{f=1}^{k} \mathbf{v}_{j, f} \cdot \mathbf{v}_{j', f}
+</script>
+</div>
+<p>Higher-order FM will be covered in a following section, just note that factorization models express their power in sparse settings, which is also where higher-order interactions are hard to estimate.</p>
+<p>Strong emphasis must be placed on feature engineering as it allows FM to mimic most factorization models and significantly impact its performance. High cardinality categorical variables one hot encoding is the most frequent step before feeding the model with data. For more efficiency, <code>creme</code> FM implementation considers string values as categorical variables and automatically one hot encode them. FM models have their own module <a href="https://creme-ml.github.io/api/overview/#facto">creme.facto</a>.</p>
+<p>## Mimic Biased Matrix Factorization (BiasedMF)</p>
+<p>Let's start with a simple example where we want to reproduce the Biased Matrix Factorization model we trained in the previous tutorial. For a fair comparison with <a href="https://creme-ml.github.io/examples/matrix-factorization-for-recommender-systems-part-1/#biased-matrix-factorization-biasedmf">Part 1 example</a>, let's set the same evaluation framework:</p>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span> <span class="nn">creme</span> <span class="kn">import</span> <span class="n">datasets</span>
+<span class="kn">from</span> <span class="nn">creme</span> <span class="kn">import</span> <span class="n">metrics</span>
+<span class="kn">from</span> <span class="nn">creme.evaluate</span> <span class="kn">import</span> <span class="n">progressive_val_score</span>
+
+<span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
+    <span class="n">X_y</span> <span class="o">=</span> <span class="n">datasets</span><span class="o">.</span><span class="n">MovieLens100K</span><span class="p">()</span>
+    <span class="n">metric</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">MAE</span><span class="p">()</span> <span class="o">+</span> <span class="n">metrics</span><span class="o">.</span><span class="n">RMSE</span><span class="p">()</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">progressive_val_score</span><span class="p">(</span><span class="n">X_y</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">metric</span><span class="p">,</span> <span class="n">print_every</span><span class="o">=</span><span class="mi">25_000</span><span class="p">,</span> <span class="n">show_time</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">show_memory</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</code></pre></div>
+
+
+<p>In order to build an equivalent model we need to use the same hyper-parameters. As we can't replace FM intercept by the global running mean we won't be able to build the exact same model:</p>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span> <span class="nn">creme</span> <span class="kn">import</span> <span class="n">compose</span>
+<span class="kn">from</span> <span class="nn">creme</span> <span class="kn">import</span> <span class="n">facto</span>
+<span class="kn">from</span> <span class="nn">creme</span> <span class="kn">import</span> <span class="n">meta</span>
+<span class="kn">from</span> <span class="nn">creme</span> <span class="kn">import</span> <span class="n">optim</span>
+<span class="kn">from</span> <span class="nn">creme</span> <span class="kn">import</span> <span class="n">stats</span>
+
+<span class="n">fm_params</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;n_factors&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="s1">&#39;weight_optimizer&#39;</span><span class="p">:</span> <span class="n">optim</span><span class="o">.</span><span class="n">SGD</span><span class="p">(</span><span class="mf">0.025</span><span class="p">),</span>
+    <span class="s1">&#39;latent_optimizer&#39;</span><span class="p">:</span> <span class="n">optim</span><span class="o">.</span><span class="n">SGD</span><span class="p">(</span><span class="mf">0.05</span><span class="p">),</span>
+    <span class="s1">&#39;sample_normalization&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s1">&#39;l1_weight&#39;</span><span class="p">:</span> <span class="mf">0.</span><span class="p">,</span>
+    <span class="s1">&#39;l2_weight&#39;</span><span class="p">:</span> <span class="mf">0.</span><span class="p">,</span>
+    <span class="s1">&#39;l1_latent&#39;</span><span class="p">:</span> <span class="mf">0.</span><span class="p">,</span>
+    <span class="s1">&#39;l2_latent&#39;</span><span class="p">:</span> <span class="mf">0.</span><span class="p">,</span>
+    <span class="s1">&#39;intercept&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="s1">&#39;intercept_lr&#39;</span><span class="p">:</span> <span class="o">.</span><span class="mi">01</span><span class="p">,</span>
+    <span class="s1">&#39;weight_initializer&#39;</span><span class="p">:</span> <span class="n">optim</span><span class="o">.</span><span class="n">initializers</span><span class="o">.</span><span class="n">Zeros</span><span class="p">(),</span>
+    <span class="s1">&#39;latent_initializer&#39;</span><span class="p">:</span> <span class="n">optim</span><span class="o">.</span><span class="n">initializers</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">mu</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">73</span><span class="p">),</span>
+<span class="p">}</span>
+
+<span class="n">regressor</span> <span class="o">=</span> <span class="n">compose</span><span class="o">.</span><span class="n">Select</span><span class="p">(</span><span class="s1">&#39;user&#39;</span><span class="p">,</span> <span class="s1">&#39;item&#39;</span><span class="p">)</span>
+<span class="n">regressor</span> <span class="o">|=</span> <span class="n">facto</span><span class="o">.</span><span class="n">FMRegressor</span><span class="p">(</span><span class="o">**</span><span class="n">fm_params</span><span class="p">)</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">PredClipper</span><span class="p">(</span>
+    <span class="n">regressor</span><span class="o">=</span><span class="n">regressor</span><span class="p">,</span>
+    <span class="n">y_min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">y_max</span><span class="o">=</span><span class="mi">5</span>
+<span class="p">)</span>
+
+<span class="n">evaluate</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+</code></pre></div>
+
+
+<div class="codehilite"><pre><span></span><code>[25,000] MAE: 0.761778, RMSE: 0.960803 – 0:00:04 – 1.14 MB
+[50,000] MAE: 0.751986, RMSE: 0.949941 – 0:00:08 – 1.33 MB
+[75,000] MAE: 0.750044, RMSE: 0.948911 – 0:00:12 – 1.54 MB
+[100,000] MAE: 0.748609, RMSE: 0.947994 – 0:00:16 – 1.73 MB
+</code></pre></div>
+
+
+<p>Both MAE are very close to each other (0.7486 vs 0.7485) showing that we almost reproduced <a href="https://creme-ml.github.io/api/reco/BiasedMF/">reco.BiasedMF</a> algorithm. The cost is a naturally slower running time as FM implementation offers more flexibility.</p>
+<h2 id="feature-engineering-for-fm-models">Feature engineering for FM models<a class="headerlink" href="#feature-engineering-for-fm-models" title="Permanent link">&para;</a></h2>
+<p>Let's study the basics of how to properly encode data for FM models. We are going to keep using MovieLens 100K as it provides various feature types:</p>
+<div class="codehilite"><pre><span></span><code><span class="kn">import</span> <span class="nn">json</span>
+
+<span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">datasets</span><span class="o">.</span><span class="n">MovieLens100K</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;x = </span><span class="si">{</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s1">y = </span><span class="si">{</span><span class="n">y</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">break</span>
+</code></pre></div>
+
+
+<div class="codehilite"><pre><span></span><code>x = {
+    &quot;user&quot;: &quot;259&quot;,
+    &quot;item&quot;: &quot;255&quot;,
+    &quot;timestamp&quot;: 874731910000000000,
+    &quot;title&quot;: &quot;My Best Friend&#39;s Wedding (1997)&quot;,
+    &quot;release_date&quot;: 866764800000000000,
+    &quot;genres&quot;: &quot;comedy, romance&quot;,
+    &quot;age&quot;: 21.0,
+    &quot;gender&quot;: &quot;M&quot;,
+    &quot;occupation&quot;: &quot;student&quot;,
+    &quot;zip_code&quot;: &quot;48823&quot;
+}
+y = 4.0
+</code></pre></div>
+
+
+<p>The features we are going to add to our model don't improve its predictive power. Nevertheless, they are useful to illustrate different methods of data encoding:</p>
+<ol>
+<li>Set-categorical variables</li>
+</ol>
+<p>We have seen that categorical variables are one hot encoded automatically if set to strings, in the other hand, set-categorical variables must be encoded explicitly by the user. A good way of doing so is to assign them a value of <span><span class="MathJax_Preview">1/m</span><script type="math/tex">1/m</script></span>, where <span><span class="MathJax_Preview">m</span><script type="math/tex">m</script></span> is the number of elements of the sample set. It gives the feature a constant "weight" across all samples preserving model's stability. Let's create a routine to encode movies genres this way:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">split_genres</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="n">genres</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;genres&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;, &#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="sa">f</span><span class="s1">&#39;genre_</span><span class="si">{</span><span class="n">genre</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="mi">1</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">genres</span><span class="p">)</span> <span class="k">for</span> <span class="n">genre</span> <span class="ow">in</span> <span class="n">genres</span><span class="p">}</span>
+</code></pre></div>
+
+
+<ol>
+<li>Numerical variables</li>
+</ol>
+<p>In practice, transforming numerical features into categorical ones works better in most cases. Feature binning is the natural way, but finding good bins is sometimes more an art than a science. Let's encode users age with something simple:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">bin_age</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;age&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">18</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;age_0-18&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+    <span class="k">elif</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;age&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">32</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;age_19-32&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+    <span class="k">elif</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;age&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">55</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;age_33-54&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;age_55-100&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+</code></pre></div>
+
+
+<p>Let's put everything together:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">fm_params</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;n_factors&#39;</span><span class="p">:</span> <span class="mi">14</span><span class="p">,</span>
+    <span class="s1">&#39;weight_optimizer&#39;</span><span class="p">:</span> <span class="n">optim</span><span class="o">.</span><span class="n">SGD</span><span class="p">(</span><span class="mf">0.01</span><span class="p">),</span>
+    <span class="s1">&#39;latent_optimizer&#39;</span><span class="p">:</span> <span class="n">optim</span><span class="o">.</span><span class="n">SGD</span><span class="p">(</span><span class="mf">0.025</span><span class="p">),</span>
+    <span class="s1">&#39;intercept&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="s1">&#39;latent_initializer&#39;</span><span class="p">:</span> <span class="n">optim</span><span class="o">.</span><span class="n">initializers</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">mu</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">73</span><span class="p">),</span>
+<span class="p">}</span>
+
+<span class="n">regressor</span> <span class="o">=</span> <span class="n">compose</span><span class="o">.</span><span class="n">Select</span><span class="p">(</span><span class="s1">&#39;user&#39;</span><span class="p">,</span> <span class="s1">&#39;item&#39;</span><span class="p">)</span>
+<span class="n">regressor</span> <span class="o">+=</span> <span class="p">(</span>
+    <span class="n">compose</span><span class="o">.</span><span class="n">Select</span><span class="p">(</span><span class="s1">&#39;genres&#39;</span><span class="p">)</span> <span class="o">|</span>
+    <span class="n">compose</span><span class="o">.</span><span class="n">FuncTransformer</span><span class="p">(</span><span class="n">split_genres</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">regressor</span> <span class="o">+=</span> <span class="p">(</span>
+    <span class="n">compose</span><span class="o">.</span><span class="n">Select</span><span class="p">(</span><span class="s1">&#39;age&#39;</span><span class="p">)</span> <span class="o">|</span>
+    <span class="n">compose</span><span class="o">.</span><span class="n">FuncTransformer</span><span class="p">(</span><span class="n">bin_age</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">regressor</span> <span class="o">|=</span> <span class="n">facto</span><span class="o">.</span><span class="n">FMRegressor</span><span class="p">(</span><span class="o">**</span><span class="n">fm_params</span><span class="p">)</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">PredClipper</span><span class="p">(</span>
+    <span class="n">regressor</span><span class="o">=</span><span class="n">regressor</span><span class="p">,</span>
+    <span class="n">y_min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">y_max</span><span class="o">=</span><span class="mi">5</span>
+<span class="p">)</span>
+
+<span class="n">evaluate</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+</code></pre></div>
+
+
+<div class="codehilite"><pre><span></span><code>[25,000] MAE: 0.759838, RMSE: 0.961281 – 0:00:10 – 1.41 MB
+[50,000] MAE: 0.751307, RMSE: 0.951391 – 0:00:22 – 1.65 MB
+[75,000] MAE: 0.750361, RMSE: 0.951393 – 0:00:33 – 1.91 MB
+[100,000] MAE: 0.749994, RMSE: 0.951435 – 0:00:44 – 2.16 MB
+</code></pre></div>
+
+
+<p>Note that using more variables involves factorizing a larger latent space, then increasing the number of latent factors <span><span class="MathJax_Preview">k</span><script type="math/tex">k</script></span> often helps capturing more information.</p>
+<p>Some other feature engineering tips from <a href="https://www.kaggle.com/c/criteo-display-ad-challenge/discussion/10555">3 idiots' winning solution</a> for Kaggle <a href="https://www.kaggle.com/c/criteo-display-ad-challenge">Criteo display ads</a> competition in 2014:</p>
+<ul>
+<li>Infrequent modalities often bring noise and little information, transforming them into a special tag can help</li>
+<li>In some cases, sample-wise normalization seems to make the optimization problem easier to be solved</li>
+</ul>
+<h2 id="higher-order-factorization-machines-hofm">Higher-Order Factorization Machines (HOFM)<a class="headerlink" href="#higher-order-factorization-machines-hofm" title="Permanent link">&para;</a></h2>
+<p>The model equation generalized to any order <span><span class="MathJax_Preview">d \geq 2</span><script type="math/tex">d \geq 2</script></span> is defined as:</p>
+<div>
+<div class="MathJax_Preview">
+\normalsize
+\hat{y}(x) = w_{0} + \sum_{j=1}^{p} w_{j} x_{j}  + \sum_{l=2}^{d} \sum_{j_1=1}^{p} \cdots \sum_{j_l=j_{l-1}+1}^{p} \left(\prod_{j'=1}^{l} x_{j_{j'}} \right) \left(\sum_{f=1}^{k_l} \prod_{j'=1}^{l} v_{j_{j'}, f}^{(l)} \right)
+</div>
+<script type="math/tex; mode=display">
+\normalsize
+\hat{y}(x) = w_{0} + \sum_{j=1}^{p} w_{j} x_{j}  + \sum_{l=2}^{d} \sum_{j_1=1}^{p} \cdots \sum_{j_l=j_{l-1}+1}^{p} \left(\prod_{j'=1}^{l} x_{j_{j'}} \right) \left(\sum_{f=1}^{k_l} \prod_{j'=1}^{l} v_{j_{j'}, f}^{(l)} \right)
+</script>
+</div>
+<div class="codehilite"><pre><span></span><code><span class="n">hofm_params</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;degree&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="s1">&#39;n_factors&#39;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span>
+    <span class="s1">&#39;weight_optimizer&#39;</span><span class="p">:</span> <span class="n">optim</span><span class="o">.</span><span class="n">SGD</span><span class="p">(</span><span class="mf">0.01</span><span class="p">),</span>
+    <span class="s1">&#39;latent_optimizer&#39;</span><span class="p">:</span> <span class="n">optim</span><span class="o">.</span><span class="n">SGD</span><span class="p">(</span><span class="mf">0.025</span><span class="p">),</span>
+    <span class="s1">&#39;intercept&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="s1">&#39;latent_initializer&#39;</span><span class="p">:</span> <span class="n">optim</span><span class="o">.</span><span class="n">initializers</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">mu</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">73</span><span class="p">),</span>
+<span class="p">}</span>
+
+<span class="n">regressor</span> <span class="o">=</span> <span class="n">compose</span><span class="o">.</span><span class="n">Select</span><span class="p">(</span><span class="s1">&#39;user&#39;</span><span class="p">,</span> <span class="s1">&#39;item&#39;</span><span class="p">)</span>
+<span class="n">regressor</span> <span class="o">+=</span> <span class="p">(</span>
+    <span class="n">compose</span><span class="o">.</span><span class="n">Select</span><span class="p">(</span><span class="s1">&#39;genres&#39;</span><span class="p">)</span> <span class="o">|</span>
+    <span class="n">compose</span><span class="o">.</span><span class="n">FuncTransformer</span><span class="p">(</span><span class="n">split_genres</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">regressor</span> <span class="o">+=</span> <span class="p">(</span>
+    <span class="n">compose</span><span class="o">.</span><span class="n">Select</span><span class="p">(</span><span class="s1">&#39;age&#39;</span><span class="p">)</span> <span class="o">|</span>
+    <span class="n">compose</span><span class="o">.</span><span class="n">FuncTransformer</span><span class="p">(</span><span class="n">bin_age</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">regressor</span> <span class="o">|=</span> <span class="n">facto</span><span class="o">.</span><span class="n">HOFMRegressor</span><span class="p">(</span><span class="o">**</span><span class="n">hofm_params</span><span class="p">)</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">PredClipper</span><span class="p">(</span>
+    <span class="n">regressor</span><span class="o">=</span><span class="n">regressor</span><span class="p">,</span>
+    <span class="n">y_min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">y_max</span><span class="o">=</span><span class="mi">5</span>
+<span class="p">)</span>
+
+<span class="n">evaluate</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+</code></pre></div>
+
+
+<div class="codehilite"><pre><span></span><code>[25,000] MAE: 0.761297, RMSE: 0.962054 – 0:00:55 – 2.6 MB
+[50,000] MAE: 0.751865, RMSE: 0.951499 – 0:01:51 – 3.07 MB
+[75,000] MAE: 0.750853, RMSE: 0.951526 – 0:02:46 – 3.58 MB
+[100,000] MAE: 0.750607, RMSE: 0.951982 – 0:03:45 – 4.06 MB
+</code></pre></div>
+
+
+<p>As said previously, high-order interactions are often hard to estimate due to too much sparsity, that's why we won't spend too much time here.</p>
+<h2 id="field-aware-factorization-machines-ffm">Field-aware Factorization Machines (FFM)<a class="headerlink" href="#field-aware-factorization-machines-ffm" title="Permanent link">&para;</a></h2>
+<p><a href="https://www.csie.ntu.edu.tw/~cjlin/papers/ffm.pdf">Field-aware variant of FM (FFM)</a> improved the original method by adding the notion of "<em>fields</em>". A "<em>field</em>" is a group of features that belong to a specific domain (e.g. the "<em>users</em>" field, the "<em>items</em>" field, or the "<em>movie genres</em>" field).</p>
+<p>FFM restricts itself to pairwise interactions and factorizes separated latent spaces — one per combination of fields (e.g. users/items, users/movie genres, or items/movie genres) — instead of a common one shared by all fields. Therefore, each feature has one latent vector per field it can interact with — so that it can learn the specific effect with each different field.</p>
+<p>The model equation is defined by:</p>
+<div>
+<div class="MathJax_Preview">
+\normalsize
+\hat{y}(x) = w_{0} + \sum_{j=1}^{p} w_{j} x_{j}  + \sum_{j=1}^{p} \sum_{j'=j+1}^{p} \langle \mathbf{v}_{j, f_{j'}}, \mathbf{v}_{j', f_{j}} \rangle x_{j} x_{j'}
+</div>
+<script type="math/tex; mode=display">
+\normalsize
+\hat{y}(x) = w_{0} + \sum_{j=1}^{p} w_{j} x_{j}  + \sum_{j=1}^{p} \sum_{j'=j+1}^{p} \langle \mathbf{v}_{j, f_{j'}}, \mathbf{v}_{j', f_{j}} \rangle x_{j} x_{j'}
+</script>
+</div>
+<p>Where <span><span class="MathJax_Preview">f_j</span><script type="math/tex">f_j</script></span> and <span><span class="MathJax_Preview">f_{j'}</span><script type="math/tex">f_{j'}</script></span> are the fields corresponding to <span><span class="MathJax_Preview">j</span><script type="math/tex">j</script></span> and <span><span class="MathJax_Preview">j'</span><script type="math/tex">j'</script></span> features, respectively.</p>
+<div class="codehilite"><pre><span></span><code><span class="n">ffm_params</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;n_factors&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
+    <span class="s1">&#39;weight_optimizer&#39;</span><span class="p">:</span> <span class="n">optim</span><span class="o">.</span><span class="n">SGD</span><span class="p">(</span><span class="mf">0.01</span><span class="p">),</span>
+    <span class="s1">&#39;latent_optimizer&#39;</span><span class="p">:</span> <span class="n">optim</span><span class="o">.</span><span class="n">SGD</span><span class="p">(</span><span class="mf">0.025</span><span class="p">),</span>
+    <span class="s1">&#39;intercept&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="s1">&#39;latent_initializer&#39;</span><span class="p">:</span> <span class="n">optim</span><span class="o">.</span><span class="n">initializers</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">mu</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">73</span><span class="p">),</span>
+<span class="p">}</span>
+
+<span class="n">regressor</span> <span class="o">=</span> <span class="n">compose</span><span class="o">.</span><span class="n">Select</span><span class="p">(</span><span class="s1">&#39;user&#39;</span><span class="p">,</span> <span class="s1">&#39;item&#39;</span><span class="p">)</span>
+<span class="n">regressor</span> <span class="o">+=</span> <span class="p">(</span>
+    <span class="n">compose</span><span class="o">.</span><span class="n">Select</span><span class="p">(</span><span class="s1">&#39;genres&#39;</span><span class="p">)</span> <span class="o">|</span>
+    <span class="n">compose</span><span class="o">.</span><span class="n">FuncTransformer</span><span class="p">(</span><span class="n">split_genres</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">regressor</span> <span class="o">+=</span> <span class="p">(</span>
+    <span class="n">compose</span><span class="o">.</span><span class="n">Select</span><span class="p">(</span><span class="s1">&#39;age&#39;</span><span class="p">)</span> <span class="o">|</span>
+    <span class="n">compose</span><span class="o">.</span><span class="n">FuncTransformer</span><span class="p">(</span><span class="n">bin_age</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">regressor</span> <span class="o">|=</span> <span class="n">facto</span><span class="o">.</span><span class="n">FFMRegressor</span><span class="p">(</span><span class="o">**</span><span class="n">ffm_params</span><span class="p">)</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">PredClipper</span><span class="p">(</span>
+    <span class="n">regressor</span><span class="o">=</span><span class="n">regressor</span><span class="p">,</span>
+    <span class="n">y_min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">y_max</span><span class="o">=</span><span class="mi">5</span>
+<span class="p">)</span>
+
+<span class="n">evaluate</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+</code></pre></div>
+
+
+<div class="codehilite"><pre><span></span><code>[25,000] MAE: 0.757718, RMSE: 0.958158 – 0:00:17 – 3.01 MB
+[50,000] MAE: 0.749502, RMSE: 0.948065 – 0:00:33 – 3.56 MB
+[75,000] MAE: 0.749275, RMSE: 0.948918 – 0:00:49 – 4.16 MB
+[100,000] MAE: 0.749542, RMSE: 0.949769 – 0:01:06 – 4.7 MB
+</code></pre></div>
+
+
+<p>Note that FFM usually needs to learn smaller number of latent factors <span><span class="MathJax_Preview">k</span><script type="math/tex">k</script></span> than FM as each latent vector only deals with one field.</p>
+<h2 id="field-weighted-factorization-machines-fwfm">Field-weighted Factorization Machines (FwFM)<a class="headerlink" href="#field-weighted-factorization-machines-fwfm" title="Permanent link">&para;</a></h2>
+<p><a href="https://arxiv.org/abs/1806.03514">Field-weighted Factorization Machines (FwFM)</a> address FFM memory issues caused by its large number of parameters, which is in the order of <em>feature number</em> times <em>field number</em>. As FFM, FwFM is an extension of FM restricted to pairwise interactions, but instead of factorizing separated latent spaces, it learns a specific weight <span><span class="MathJax_Preview">r_{f_j, f_{j'}}</span><script type="math/tex">r_{f_j, f_{j'}}</script></span> for each field combination modelling the interaction strength.</p>
+<p>The model equation is defined as:</p>
+<div>
+<div class="MathJax_Preview">
+\normalsize
+\hat{y}(x) = w_{0} + \sum_{j=1}^{p} w_{j} x_{j}  + \sum_{j=1}^{p} \sum_{j'=j+1}^{p} r_{f_j, f_{j'}} \langle \mathbf{v}_j, \mathbf{v}_{j'} \rangle x_{j} x_{j'}
+</div>
+<script type="math/tex; mode=display">
+\normalsize
+\hat{y}(x) = w_{0} + \sum_{j=1}^{p} w_{j} x_{j}  + \sum_{j=1}^{p} \sum_{j'=j+1}^{p} r_{f_j, f_{j'}} \langle \mathbf{v}_j, \mathbf{v}_{j'} \rangle x_{j} x_{j'}
+</script>
+</div>
+<div class="codehilite"><pre><span></span><code><span class="n">fwfm_params</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;n_factors&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="s1">&#39;weight_optimizer&#39;</span><span class="p">:</span> <span class="n">optim</span><span class="o">.</span><span class="n">SGD</span><span class="p">(</span><span class="mf">0.01</span><span class="p">),</span>
+    <span class="s1">&#39;latent_optimizer&#39;</span><span class="p">:</span> <span class="n">optim</span><span class="o">.</span><span class="n">SGD</span><span class="p">(</span><span class="mf">0.025</span><span class="p">),</span>
+    <span class="s1">&#39;intercept&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="s1">&#39;seed&#39;</span><span class="p">:</span> <span class="mi">73</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">regressor</span> <span class="o">=</span> <span class="n">compose</span><span class="o">.</span><span class="n">Select</span><span class="p">(</span><span class="s1">&#39;user&#39;</span><span class="p">,</span> <span class="s1">&#39;item&#39;</span><span class="p">)</span>
+<span class="n">regressor</span> <span class="o">+=</span> <span class="p">(</span>
+    <span class="n">compose</span><span class="o">.</span><span class="n">Select</span><span class="p">(</span><span class="s1">&#39;genres&#39;</span><span class="p">)</span> <span class="o">|</span>
+    <span class="n">compose</span><span class="o">.</span><span class="n">FuncTransformer</span><span class="p">(</span><span class="n">split_genres</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">regressor</span> <span class="o">+=</span> <span class="p">(</span>
+    <span class="n">compose</span><span class="o">.</span><span class="n">Select</span><span class="p">(</span><span class="s1">&#39;age&#39;</span><span class="p">)</span> <span class="o">|</span>
+    <span class="n">compose</span><span class="o">.</span><span class="n">FuncTransformer</span><span class="p">(</span><span class="n">bin_age</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">regressor</span> <span class="o">|=</span> <span class="n">facto</span><span class="o">.</span><span class="n">FwFMRegressor</span><span class="p">(</span><span class="o">**</span><span class="n">fwfm_params</span><span class="p">)</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">PredClipper</span><span class="p">(</span>
+    <span class="n">regressor</span><span class="o">=</span><span class="n">regressor</span><span class="p">,</span>
+    <span class="n">y_min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">y_max</span><span class="o">=</span><span class="mi">5</span>
+<span class="p">)</span>
+
+<span class="n">evaluate</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+</code></pre></div>
+
+
+<div class="codehilite"><pre><span></span><code>[25,000] MAE: 0.761539, RMSE: 0.962241 – 0:00:19 – 1.16 MB
+[50,000] MAE: 0.754089, RMSE: 0.953181 – 0:00:40 – 1.35 MB
+[75,000] MAE: 0.754806, RMSE: 0.954979 – 0:01:00 – 1.56 MB
+[100,000] MAE: 0.755404, RMSE: 0.95604 – 0:01:20 – 1.75 MB
+</code></pre></div>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+
+<!-- Application footer -->
+<footer class="md-footer">
+
+  <!-- Further information -->
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+
+      <!-- Copyright and theme information -->
+      <div class="md-footer-copyright">
+        
+          <div class="md-footer-copyright__highlight">
+            Copyright &copy; 2019 - 2020
+          </div>
+        
+        Made with
+        <a
+          href="https://squidfunk.github.io/mkdocs-material/"
+          target="_blank" rel="noopener"
+        >
+          Material for MkDocs
+        </a>
+      </div>
+
+      <!-- Social links -->
+      
+  <div class="md-footer-social">
+    
+      
+      
+        
+        
+      
+      <a href="https://github.com/creme-ml/creme" target="_blank" rel="noopener" title="github.com" class="md-footer-social__link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 512"><path d="M186.1 328.7c0 20.9-10.9 55.1-36.7 55.1s-36.7-34.2-36.7-55.1 10.9-55.1 36.7-55.1 36.7 34.2 36.7 55.1zM480 278.2c0 31.9-3.2 65.7-17.5 95-37.9 76.6-142.1 74.8-216.7 74.8-75.8 0-186.2 2.7-225.6-74.8-14.6-29-20.2-63.1-20.2-95 0-41.9 13.9-81.5 41.5-113.6-5.2-15.8-7.7-32.4-7.7-48.8 0-21.5 4.9-32.3 14.6-51.8 45.3 0 74.3 9 108.8 36 29-6.9 58.8-10 88.7-10 27 0 54.2 2.9 80.4 9.2 34-26.7 63-35.2 107.8-35.2 9.8 19.5 14.6 30.3 14.6 51.8 0 16.4-2.6 32.7-7.7 48.2 27.5 32.4 39 72.3 39 114.2zm-64.3 50.5c0-43.9-26.7-82.6-73.5-82.6-18.9 0-37 3.4-56 6-14.9 2.3-29.8 3.2-45.1 3.2-15.2 0-30.1-.9-45.1-3.2-18.7-2.6-37-6-56-6-46.8 0-73.5 38.7-73.5 82.6 0 87.8 80.4 101.3 150.4 101.3h48.2c70.3 0 150.6-13.4 150.6-101.3zm-82.6-55.1c-25.8 0-36.7 34.2-36.7 55.1s10.9 55.1 36.7 55.1 36.7-34.2 36.7-55.1-10.9-55.1-36.7-55.1z"/></svg>
+      </a>
+    
+  </div>
+
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../assets/javascripts/vendor.3636a4ec.min.js"></script>
+      <script src="../../assets/javascripts/bundle.e9fe3281.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents"}</script>
+      
+      <script>
+        app = initialize({
+          base: "../..",
+          features: ["tabs"],
+          search: Object.assign({
+            worker: "../../assets/javascripts/worker/search.5eca75d3.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+      
+        <script src="../../js/version-select.js"></script>
+      
+    
+  </body>
+</html>
